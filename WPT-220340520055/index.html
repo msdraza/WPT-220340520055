@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Library</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js"></script>
+    <script>
+
+        $(() => {
+            console.log("Page Loaded");
+
+            $('#book_id').blur(() => {
+                console.log("Blur Event Occured");
+
+                let input = { book_id: $('book_id').val() }
+
+                let ajaxpara = {
+                    type: "get",
+                    dataType: "json",
+                    url: "http://localhost:8081/getdtls",
+                    data: input,
+                    success: (datafromserver) => {
+                        if (datafromserver === true) {
+                            console.log("success data");
+                            $('#book_name').val(datafromserver.bookdtls.book_name);
+                            $('#price').val(datafromserver.bookdtls.price);
+
+                            $('#add').prop("disabled", true);
+                        } else {
+                            $('#book_name').val("");
+                            $('#price').val("");
+                            $('#msg').text("Book Details Found");
+                            $('#add').prop("disabled", false);
+                        }
+                    },
+                    error: (errorfromserver) => {
+                        alert('we have trouble ' + JSON.stringify(error));
+                    }
+                }
+                $.ajax(ajaxpara);
+            });
+        });
+
+        $(() => {
+            console.log("Page Loaded");
+
+            $('#add').click(() => {
+                console.log("Add Button Is Clicked");
+
+                let input = { book_id: $('book_id').val(), book_name: $('book_name').val(), price: $('price').val() }
+
+                let ajaxpara = {
+                    type: "get",
+                    dataType: "json",
+                    url: "http://localhost:8081/insertdtls",
+                    data: input,
+                    success: (datafromserver) => {
+                        if (datafromserver === true) {
+                            console.log("Successful");
+                            $('#msg').text("Insert Successful");
+                        } else {
+                            console.log("Unsuccessful");
+                            $('#msg').text("Insert Unsuccessful");
+                        }
+                    },
+                    error: (errorfromserver) => {
+                        alert('we have trouble ' + JSON.stringify(error));
+                    }
+                }
+                $.ajax(ajaxpara);
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <h1>Book Shop</h1>
+    <input type="text" name="bookid" id="book_id" placeholder="BOOK-ID"><span id="msg">What Happened To Book</span><br>
+    <input type="text" name="bookname" id="book_name" placeholder="BOOK-Name"><br>
+    <input type="text" name="price" id="price" placeholder="Price"><br>
+    <br>
+    <input type="button" value="add" id="add" disabled>
+    <hr>
+    <span id="display">Output will Be Shown Here</span>
+</body>
+
+</html>
